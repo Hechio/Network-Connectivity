@@ -5,6 +5,7 @@ import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
+import android.util.Log
 import androidx.lifecycle.LiveData
 
 /**
@@ -44,6 +45,7 @@ class NetworkStatusHelper(private  val context: Context) : LiveData<NetworkStatu
             val hasNetworkConnection =
                 networkCapability?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) ?: false
             if (hasNetworkConnection){
+                Log.e("network status", "has net")
                 validNetworkConnections.add(network)
                 updateStatus()
             }
@@ -53,6 +55,7 @@ class NetworkStatusHelper(private  val context: Context) : LiveData<NetworkStatu
             super.onLost(network)
             validNetworkConnections.remove(network)
             updateStatus()
+            Log.e("network status", "no net")
         }
 
         override fun onCapabilitiesChanged(
