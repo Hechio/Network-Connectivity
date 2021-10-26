@@ -11,7 +11,7 @@ import androidx.lifecycle.LiveData
 /**
  * Created by stevehechio on 10/14/21
  */
-class NetworkStatusHelper(private  val context: Context) : LiveData<NetworkStatus>() {
+class NetworkStatusHelper(context: Context) : LiveData<NetworkStatus>() {
 
     var connectivityManager: ConnectivityManager =
         context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -53,7 +53,7 @@ class NetworkStatusHelper(private  val context: Context) : LiveData<NetworkStatu
 
         override fun onLost(network: Network) {
             super.onLost(network)
-            validNetworkConnections.remove(network)
+            validNetworkConnections.clear()
             updateStatus()
             Log.e("network status", "no net")
         }
@@ -65,15 +65,17 @@ class NetworkStatusHelper(private  val context: Context) : LiveData<NetworkStatu
             super.onCapabilitiesChanged(network, networkCapabilities)
             if (networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)){
                 validNetworkConnections.add(network)
+                updateStatus()
             }else{
                 validNetworkConnections.remove(network)
+                updateStatus()
             }
-            updateStatus()
+
         }
     }
 
     private fun updateStatus() {
-       if(validNetworkConnections.isEmpty()){
+       if(validNetworkConnections.size > 0){
            postValue(NetworkStatus.Available)
        }else{
            postValue(NetworkStatus.UnAvailable)
